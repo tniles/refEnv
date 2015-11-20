@@ -1,0 +1,15 @@
+# open new tab on google
+keymap Esc-G TAB_GOTO google.com
+
+# firefox style tab control
+keymap T TAB_GOTO
+#keymap C-^[[5~ PREV_TAB
+#keymap C-^[[6~ NEXT_TAB
+
+# custom forward/back navi
+keymap B    BACK
+keymap F    NEXT
+
+# bookmarks
+keymap C-B VIEW_BOOKMARK
+keymap C-D ADD_BOOKMARK

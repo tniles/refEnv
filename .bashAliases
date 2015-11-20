@@ -1,0 +1,596 @@
+###############################################################################
+# ALIASES FILE for TYLER NILES
+###############################################################################
+# Note: before adopting this file for your aliases, it is recommended that you
+# make a personal .bak or .bkup version of the alias files you currently use.
+# That will make customization easier if you find any of your favorites are 
+# missing or need tweaking.
+###############################################################################
+
+#	TOC
+# Linux Utilities
+# Apache
+# Networking
+# Printer aliases
+# Code Analysis
+# Debugging
+# Random Fun
+
+echo "Defining Linux aliases..."
+###############################################################################
+
+
+if [ `uname -o` == "Cygwin" ] ; then
+    Cygwin=1
+    echo "Cygwin detected"
+else
+    Cygwin=0
+fi
+
+#export host="172.60.17.26"
+
+# NOTE: in order to define a function, make sure you unalias a similarly named
+# alias, if it exists.
+#ls_func ()
+#{
+#    ls -lh .bash* ;
+#}
+
+# To remove a function definition, use:
+# unset -f ls_func ; unalias ls_func
+
+unset -f gvim
+if [ $Cygwin -eq 1 ] ; then
+    gvim ()
+    {
+        ~/bin/gvim "$@" &
+    }
+else
+# This solves the "Ubuntu Menu Proxy: Timeout was reached" error with the unity desktop
+    #alias gvim='UBUNTU_MENUPROXY= gvim'
+    gvim ()
+    {
+        /usr/bin/gvim -f "$@" &
+    }
+fi
+
+if [ $Cygwin -eq 1 ] ; then
+    unset -f go
+    go ()
+    {
+        #goDir=`cygpath -w "$@"`
+        #explorer $goDir
+        for named in "$@"; do
+            cygstart "$named"
+        done
+    }
+else
+    # with redirect stderr to devNull; could do both stderr and stdout (& instead of 2 or 1)
+    unset -f go
+    go ()
+    {
+        for named in "$@"; do
+            gnome-open "$named" 2>/dev/null
+            #gnome-open "$named"
+        done
+    }
+fi
+
+# kdiff 3
+unset -f kd
+kd ()
+{
+    kdiff3 "$@" &
+}
+
+# create a dated backup of a file or directory
+unset -f bak
+bak ()
+{
+    # I added the extra dot for filenames with numbers in them. I don't like this convention,
+    # at least not at first glance. The good news is that tar will preserve the original 
+    # filename, and a hidden benefit is it will be that much easier to spot archives in a 
+    # directory listing.
+    # Note: files with extensions will be truncated. Is this a bad thing? Seems desirable for
+    # now, e.g. "an1234.20150422.tar" looks better than "an1234.txt.20150422.tar".
+    for named in "$@"; do
+        tar -zcvf "${named%[./]*}.`date +%Y%m%d`.tar" "$named"
+        #echo "${named%[./]*}.`date +%Y%m%d`.tar"
+    done
+}
+# un-backup :-)
+unset -f unbak
+unbak ()
+{
+    for named in "$@"; do
+        tar -zxvf "$named"
+    done
+}
+
+# countdown timer
+unset -f countdown
+countdown ()
+{
+    if [ "$@" -ge 1 ]; then
+        MIN="$@";
+        for ((i=MIN*60;i>=0;i--)); do
+            echo -ne "\r$(date -d"0+$i sec" +%H:%M:%S)";
+            sleep 1;
+        done
+        echo ""
+    else
+        echo -e "\tPlease provide an integer number of minutes"
+    fi
+}
+
+
+# git
+
+alias gs='git status'
+alias gd='git diff'
+alias gdt='git difftool -y'
+alias ga='git add'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gbr='git branch -r'       # show remote branches
+alias gbv='git branch -vv'      # show tracked remote branch
+alias gc='git commit'
+alias gca='git commit -a'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gfetch='git fetch'
+alias gpull='git pull'
+alias gpush='git push'
+alias gl='git log | less -r'
+alias glg='git log --graph | less -R'       # R/r for colors, but R is better for display
+alias glgd='git log --graph --decorate=full | less -R'  # decorate to include tags&refs
+alias glga='glgd'
+alias gk='gitk --all &'
+alias gsubup='git submodule update --init'
+alias gfe='git submodule foreach --recursive' # run a cmd in all subrepos recursively (e.g. 'git clean -ffxd')
+alias gr='git remote -v'            # list remotes
+alias grv='gr'
+alias gmrh='git rev-parse HEAD'     # git most recent hash
+alias grph='gmrh'
+alias gt='git tag -a'               # make a heavy (annotated) tag
+
+# bash functions for advanced (multi-word) git aliases
+unset -f git
+git() {
+    case $* in
+        "rebase --"* ) shift 1; command git rebase "$@" ;;
+        rebase* ) shift 1; command git rebase -i "$@" ;;
+        * ) command git "$@" ;;
+    esac
+}
+
+# qgit & gitk 
+alias qgit='qgit &'
+alias gitk='gitk --all &'
+
+# hg (mercurial)
+
+alias hgs='hg sum'
+alias hga='hg add'
+alias hgc='hg commit'
+alias hgpull='hg pull'
+alias hgpush='hg push'
+
+# bash functions for advanced (multi-word) hg aliases
+unset -f hg
+hg() {
+    case $* in
+        revert* ) shift 1; command hg backout "$@" ;;
+        * ) command hg "$@" ;;
+    esac
+}
+
+
+# Linux Utilities
+
+alias su='su -m'
+alias grep='grep --color=auto -n --binary-files=without-match'
+alias grepi='grep -i'
+alias grepr='grep -r'
+alias grepir='grep -ir'
+alias egrep='egrep --color=auto -n --binary-files=without-match'
+alias fgrep='fgrep --color=auto -n --binary-files=without-match'
+# find is good, but locate may be better!
+alias findf='find */* -print | grep \!*'
+alias findl='find . -type l'
+alias findr='find . -type f'
+# find the latest files, recursively
+#alias findlt='find /path -printf '%T+ %p\n' | sort -r | head'
+alias top='/usr/bin/top d 1'
+# Use top to show threads of a particular process
+#alias topt='–H –p <app’s PID>'
+alias sa='source ~/.bash_aliases'
+#alias mandump='man \!* | col -b > $HOME/mantxt/\!*.man'
+alias hcl='cat /dev/null > ~/.bash_history && history -c'   # clear bash cli history
+alias hc='hcl'
+alias clh='hcl'
+
+alias lsb='cat /etc/lsb-release'
+alias machine='uname -a'
+alias lspkg="dpkg --get-selections | grep -v deinstall | sed 's/:/ /' | awk -F' ' '{print \$2}' | less"
+
+alias ut='uptime'
+alias atq='at -l;ls -AFl /var/spool/at;ls -AFl /var/spool/at/spool;/usr/bin/atq'
+#alias atq=at -l\;ls -l /usr/spool/cron/atjobs\; /bin/atq
+alias fin='find . -name "\!*" -print'
+# find -name "*.pl" -exec chmod a+rx {} \; -print
+# find -name "*srec" -exec mv {} \.\/ \; -print | tee temp.txt
+# find . -type f -exec ls -s {} \; | sort -n -r | head -5
+# find . -type f -exec ls -s {} \; | sort -n | head -5
+# find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
+alias h='history'
+alias j='jobs'
+#alias aj="ps aux | grep tniles | awk '{ print $11,$12,$13,$14,$15 }'"
+alias k9='kill -9 \!*'
+
+# damage control
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+
+
+# directory control
+alias sd='clear'
+unset -f sd ; unalias sd
+if [ $Cygwin -eq 1 ] ; then
+    sd ()
+    {
+        pushd "$*" > /dev/null
+    }
+    alias po='popd'
+else
+    sd ()
+    {
+        pushd "$1" > /dev/null
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+    }
+    alias po='popd && export PS1="[\#]\u@\h: `pwd | '"awk -F/ '{ print \$(NF-1)\"/\"\$(NF) }'"'` \$ "'
+fi
+
+alias cd='clear'
+unset -f cd ; unalias cd
+cd ()
+{
+    command cd "$1"
+    export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+}
+
+alias d='dirs'      # show pushd/popd stack
+alias cdh='cd ~'
+alias sdh='sd ~'
+alias sdhome='sd ~'
+alias cddesk='cd ~/Desktop'
+alias sddesk='sd ~/Desktop'
+alias cddl='cd ~/Downloads'
+alias sddl='sd ~/Downloads'
+alias cddoc='cd ~/Documents'
+alias cddocs='cd ~/Documents'
+alias sddoc='sd ~/Documents'
+alias sddocs='sd ~/Documents'
+alias cdpic='cd ~/Pictures'
+alias cdpics='cd ~/Pictures'
+alias sdpic='sd ~/Pictures'
+alias sdpics='sd ~/Pictures'
+alias cdvid='cd ~/Videos'
+alias cdvids='cd ~/Videos'
+alias sdvid='sd ~/Videos'
+alias sdvids='sd ~/Videos'
+alias cdsrc='cd ~/src'
+alias sdsrc='sd ~/src'
+alias cdckt='cd ~/ckt'
+alias sdckt='sd ~/ckt'
+alias cdbin='cd ~/bin'
+alias sdbin='sd ~/bin'
+
+alias ls='ls -C -F --color=auto'
+alias l='ls --group-directories-first'
+alias la='l -A'
+alias lr='l -r'
+alias ll='l -l'
+alias llh='l -lh'
+alias llt='l -ltr'
+alias lltr='llt'
+alias lla='l -Al'
+alias llah='l -Alh'
+alias llar='l -Alr'
+# selinux
+alias lsz='ls -Z'
+alias lz='l -Z'
+alias llz='l -lZ'
+alias llaz='l -AlZ'
+# ls directories
+alias dir='l -d */'
+alias lld='ll -d */'
+alias llhd='llh ; du -hs *'     # list size of files and directories in human-readable format
+# ls inodes
+alias li='l -i'
+# Note the 2nd field of ls -l reveals the number of inodes
+# Alternatively, `find . -printf "%s: %n\n"`
+# Use `find . -inum NUM` to find all instances of files with inode NUM
+# Alternatively, `find . -samefile fileName` to find files sharing inode with fileName
+
+# du -h --max-depth=1 ... limits depth search
+# du -hs | sort -nk1 ... will show largest item, caution: no regard for K/M/G suffixes
+
+# calendar
+alias cal='cal -3'
+
+# memory usage
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+
+# Special locations referenced often
+alias llbin='ll ~/bin'
+alias llsrc='ll ~/src'
+
+# clear
+alias cl='clear'
+alias cls='clear && l'
+
+# web
+alias w3m='w3m -no-cookie -s https://www.google.com'
+ 
+# shm analysis
+alias shmcheck="ipcs -m /run/shm | command awk -F' ' '{ printf \"%d %d\n\", \$5,\$6}' | command grep -v [a-z-] | command awk '{total+=(\$1*\$2)} END {printf \"%d bytes\n\", total}'"
+
+# OpenPGP Gnu Privacy Guard
+alias gpg='gpg2 --no-greeting'              # gpg2 for desktops, suppress copyright
+
+# disk disk
+# pgrep -l 'dd$'            # get $PID of dd
+# sudo kill -USR1 $PID      # temporary kill (use -USR with caution), output shows progress
+ 
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# path
+alias showpath='echo $PATH | tr ":" "\n\"'
+# List your path EV in a nice line by line manner
+alias lspath='printenv PATH | tr ":" "\n"'
+
+# qrmm allows us to program F2 to qrmm;next so sometimes q quits out of more
+alias qrmm='rmm'
+# --showproc mhl causes ~/Mail/mhl.format to be used for formatting mail
+alias show='show -showproc mhl'
+alias next='next -showproc mhl'
+alias w='w \| sort'
+ 
+#alias cpr=cpr \-w81 \-o \$argv
+alias cwd='echo $cwd'
+
+alias lo=logout
+#alias lockscreen='xlock -mode random'
+
+#alias mvm='mvmail \!*'
+#alias prm='prmail \!*'
+#alias nsm='nsmail \!*'
+#alias ns='nsmail \!*'
+
+# octave
+alias octave='octave -q'
+
+# other
+alias gp='gnuplot \!*'
+#alias ?="echo `/usr/ucb/whoami` on `hostname`"
+#alias oo='$HOME/OpenOffice.org1.0.3/soffice&'	#open office .org
+#alias unres='nm -u \!* > unres.lst'				#might want to re-enable later
+#alias findLocked='rlog -L -h * | more'				#might want to re-enable later
+#alias fl='rlog -L -h RCS/*,v'					#might want to re-enable later
+alias psall='ps auxw --cols 200 \!*'
+alias psme='ps auxw --cols 200 \!* | grep $user'
+
+alias showConsoleLog='cat /var/adm/messages'
+
+# Hex Inspection 
+#alias llfp='ls -alL /mnt/floppy'
+alias hexDump='od -h \!* 0x0'
+alias hexDump16='od -t x2 \!*'
+alias hexDump8='od -t x1 \!*'
+alias hexDump16Ascii='xxd \!*'
+
+# Cool stuff
+alias xload='xload -scale 11 -geometry 300x300+80+80 &'
+
+# Services
+alias nfsstatus='/etc/rc.d/init.d/nfs status'
+alias nfsstop='/etc/rc.d/init.d/nfs stop'
+alias nfsstart='/etc/rc.d/init.d/nfs start'
+alias nfsrst='/etc/rc.d/init.d/nfs restart'
+
+alias dhcprst='/etc/rc.d/init.d/dhcpd restart'
+alias dhcpstop='/etc/rc.d/init.d/dhcpd stop'
+
+alias tftprst='/etc/rc.d/init.d/xinetd restart'
+
+alias ntprst='/etc/rc.d/init.d/ntpd restart'
+
+alias smbrst='/etc/rc.d/init.d/smb restart'
+alias smbstatus='/etc/rc.d/init.d/smb status'
+
+
+###############################################################################
+# Apache
+
+# "check redirects" (or "crud"): provide an ip addr (or localhost) after the line
+alias crd='curl --verbose --head --location'
+
+
+###############################################################################
+# Networking
+
+alias ssh='ssh -Y'
+
+alias ping='ping -c 10'
+
+alias ipaddr='ip a s | command grep "\<inet\>"'
+
+# enet and networking
+alias hi='hostname -I'
+
+alias whois='whois -H'
+
+alias connInfo='nmcli dev list iface'       # ubuntu 12.04, must supply iface, e.g. 'eth0'
+#alias connInfo='nmcli dev show'             # ubuntu 15+
+# 'nm-tool' by itself is probably a better solution, and 'cat /etc/resolv.conf' is more
+# traditional and may be more telling.
+
+
+###############################################################################
+# Printer aliases (lpr and pdf)
+
+# NOTE: confer with /etc/cups/printers.conf for named printers
+# lp/lpr - print files
+# lpq    - show print queue status
+# lprm   - cancel print jobs
+# lpstat - show cups status
+# lpoptions - show/set printer options
+
+alias lpq='lpq -P $PRINTER'
+#lpr()
+#{
+#    for doc in "$@"; do
+#        lpr -P "$PRINTER" "$doc"
+#    done
+#}
+#
+#lprm()
+#{
+#    for doc in "$@"; do
+#        lprm -P "$PRINTER" "$doc"
+#    done
+#}
+alias lprma='lprm -P $PRINTER -'
+alias lprmall='lprm -P $PRINTER -'
+
+# Note: %.* for after last dot, %%.* for after first dot
+pdf ()
+{
+    for doc in "$@"; do
+        enscript --pretty-print --color -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
+    done
+}
+
+pdfn ()
+{
+    for doc in "$@"; do
+        enscript --pretty-print --color --line-numbers -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
+    done
+}
+
+
+# the 'c' in lprc is "code"
+alias lprc='a2ps --line-numbers=1 \!*'
+#alias mylpr='a2ps -B -R --borders=no --columns=1 --chars-per-line=80 \!*'
+#alias mylpr2='a2ps -B -R --borders=no --columns=1 --chars-per-line=80 --sides=2 \!*'
+
+
+###############################################################################
+# Code Analysis
+
+# find . –name “*.cpp” –o –name “*.[ch]” > cscope.files
+# then type:
+# cscope –b –q –R
+# You cscope database is now created.
+# When you invoke cscope type:
+# cscope –d     // prevents database from being rebuilt when invoking cscope
+
+
+# From build directory, using relative path. See sop for details.
+alias kw='kwcheck run \!*'
+
+
+###############################################################################
+# Debugging
+
+# Format: <gdb command> <binary location> <core file specification>
+
+# Aliases for telnet to connect to DUTs. The IP address vars 
+# can be changed from the shell without having to re-source this file.
+#
+# By <IP> by station:
+export ipBase=126.26.17
+export ip1=$ipBase.174
+export ip2=$ipBase.159
+export ip3=$ipBase.160
+alias ipBase='set ipBase = \!*'
+alias ip1='set ip1 = $ipBase.\!*'
+alias ip2='set ip2 = $ipBase.\!*'
+alias ip3='set ip3 = $ipBase.\!*'
+alias tn1='telnet $ip1 2032'        # command ip port
+alias tn2='telnet $ip2 2032'
+alias tn3='telnet $ip3 2032'
+
+
+##############################################################################
+# Random Fun :-)
+
+alias wisdom='fortune | cowsay -w'
+alias hm='fortune | rev'
+alias apg='apg -a 0 -m 12 -t'       # generate passwords (pronouncable, 12 chars)
+#alias ddate='ddate | lolcat'        # fun date display
+alias train='sl'                    # ASCII art (sl-h for the full sequence)
+alias redpill='cmatrix'
+alias redPill='cmatrix'
+# also, try xmatrix in xscreensaver
+
+# xkcd style password
+alias xkcdpass='shuf -n4 /usr/share/dict/words | sed s/"'"'"'s"// | tr -d ''\\n'' && echo ""'
+#alias xkcdpass="shuf -n4 /usr/share/dict/words | sed s/\'s// | tr -d '\n' && echo """
+
+# file encrypt
+#alias fencrypt='cat file.gz.cpt *[a-z] | ccdecrypt -k yoursecretpassword | tar -xzf -'
+
+# up
+#up() { local x='';for i in $(seq ${1:-1}); do x="$x../"; done; cd $x; }
+
+# universal extract
+#   uzip() {
+#       if [ -f $1 ] ; then
+#           case $1 in
+#               *.tar.bz2)  tar xvjf $1 ;;
+#               *.tar.gz)   tar xvzf $1 ;;
+#               *.tar.xz)   tar Jxvf $1 ;;
+#               *.bz2)      bunzip2 $1  ;;
+#               *.rar)      unrar x $1  ;;
+#               *.gz)       gunzip $1   ;;
+#               *.tar)      tar xvf $1  ;;
+#               *.tbz2)     tar xvjf $1 ;;
+#               *.tgz)      tar xvzf $1 ;;
+#               *.zip)      unzip -v $1 ;;
+#               *.Z)        uncompress $1 ;;
+#               *.7z)       7z x $1 ;;
+#               *)          echo "don't know how to extract '$1'..." ;;
+#           esac
+#       else
+#          echo "'$1' is not a valid file!"
+#       fi
+#   }
+
+
+# cool extras
+#You can print a skull and cross bones if the font you're using includes it by 
+#doing:
+#/usr/bin/printf '\u2620\n'
+#then you can copy and paste the character in the position you want it in your 
+#prompt definition, for example:
+#set prompt = "%U%m%u:%B%~%b% ☠ # "
+#You can make your prompt persistent by add that assignment to your ~/.tcshrc 
+#file.
+
+# find out what this does before using it
+# dmidecode | grep -i 'Base Board Information' -A4 -B1
+
+
+###############################################################################
+#
+echo "Aliases Done"
+#
+###############################################################################
+
