@@ -128,6 +128,7 @@ countdown ()
 
 alias gs='git status'
 alias gd='git diff'
+alias gdc='git diff --check'
 alias gdt='git difftool -y'
 alias ga='git add'
 alias gb='git branch'
@@ -205,7 +206,7 @@ alias findr='find . -type f'
 alias top='/usr/bin/top d 1'
 # Use top to show threads of a particular process
 #alias topt='–H –p <app’s PID>'
-alias sa='source ~/.bash_aliases'
+alias sa='source ~/.bashAliases'
 #alias mandump='man \!* | col -b > $HOME/mantxt/\!*.man'
 alias hcl='cat /dev/null > ~/.bash_history && history -c'   # clear bash cli history
 alias hc='hcl'
