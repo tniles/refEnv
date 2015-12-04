@@ -235,6 +235,8 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 
+# secure deletion (not for journaled fs, see man page)
+alias shred='shred -u -v -n 3'  # -u/--remove may be best specified separately, as well as -f
 
 # directory control
 alias sd='clear'
@@ -327,7 +329,7 @@ alias li='l -i'
 alias cal='cal -3'
 
 # memory usage
-alias df='df -h'
+alias df='df -hT'
 alias du='du -h'
 alias free='free -m'
 
@@ -435,6 +437,9 @@ alias ssh='ssh -Y'
 alias ping='ping -c 10'
 
 alias ipaddr='ip a s | command grep "\<inet\>"'
+
+alias ipaddrExt="lynx -dump -hiddenlinks=ignore -nolist http://checkip.dyndns.org | awk '{print \$4}' | tr -d \"\n\""
+#alias ipaddrExt="lynx -dump -hiddenlinks=ignore -nolist http://checkip.dyndns.org | awk '{print $4}' | sed \':a;N;$!ba;s/\n//g\'"
 
 # enet and networking
 alias hi='hostname -I'
