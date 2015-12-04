@@ -329,7 +329,7 @@ alias cal='cal -3'
 # memory usage
 alias df='df -h'
 alias du='du -h'
-alias free='free -h'
+alias free='free -m'
 
 # Special locations referenced often
 alias llbin='ll ~/bin'
