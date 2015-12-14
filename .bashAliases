@@ -225,8 +225,6 @@ alias fin='find . -name "\!*" -print'
 # find . -type f -exec ls -s {} \; | sort -n -r | head -5
 # find . -type f -exec ls -s {} \; | sort -n | head -5
 # find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
-alias h='history'
-alias j='jobs'
 #alias aj="ps aux | grep tniles | awk '{ print $11,$12,$13,$14,$15 }'"
 alias k9='kill -9 \!*'
 
@@ -264,7 +262,10 @@ cd ()
     export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
 }
 
+alias h='history'
+alias j='jobs'
 alias d='dirs'      # show pushd/popd stack
+alias dj='d ; j'
 alias cdh='cd ~'
 alias sdh='sd ~'
 alias sdhome='sd ~'

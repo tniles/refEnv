@@ -66,14 +66,17 @@ unset color_prompt force_color_prompt
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    #PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    PS1="[\#]\u@\h: \W \$ "
     ;;
 *)
+    PS1="bash \$ "
     ;;
 esac
 
-# Custom prompt
-PS1="[\#]\u@\h: \W \$ "
+# set term title bar
+#PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+PROMPT_COMMAND='echo -ne "\033]0;Department of Awesome\007"'
 
 # enable color support of ls
 if [ -x /usr/bin/dircolors ]; then
