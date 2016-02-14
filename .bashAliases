@@ -313,8 +313,8 @@ alias lz='l -Z'
 alias llz='l -lZ'
 alias llaz='l -AlZ'
 # ls directories
-alias dir='l -d */'
-alias lld='ll -d */'
+alias dir='l -d */ | sed s^//^/\ ^g'
+alias lld='ll -d */ | sed s^//^/\ ^g'
 alias llhd='llh ; du -hs *'     # list size of files and directories in human-readable format
 # ls inodes
 alias li='l -i'
@@ -355,6 +355,9 @@ alias gpg='gpg2 --no-greeting'              # gpg2 for desktops, suppress copyri
 # pgrep -l 'dd$'            # get $PID of dd
 # sudo kill -USR1 $PID      # temporary kill (use -USR with caution), output shows progress
  
+# dmesg
+alias dmesg='dmesg | less'
+
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
