@@ -23,6 +23,9 @@ echo "Defining Linux aliases..."
 if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
+    # start xwindow system if not yet running
+    #startxwin -q &
+    export DISPLAY=":0.0"
 else
     Cygwin=0
 fi
@@ -40,13 +43,8 @@ fi
 # unset -f ls_func ; unalias ls_func
 
 unset -f gvim
-if [ $Cygwin -eq 1 ] ; then
-    gvim ()
-    {
-        ~/bin/gvim "$@" &
-    }
-else
-# This solves the "Ubuntu Menu Proxy: Timeout was reached" error with the unity desktop
+if [ $Cygwin -eq 0 ] ; then
+    # This solves the "Ubuntu Menu Proxy: Timeout was reached" error with the unity desktop
     #alias gvim='UBUNTU_MENUPROXY= gvim'
     gvim ()
     {
@@ -77,6 +75,9 @@ else
 fi
 
 # kdiff 3
+if [ $Cygwin -eq 1 ] ; then
+    alias kdiff3='kdiff3-qt'
+fi
 unset -f kd
 kd ()
 {
@@ -228,6 +229,11 @@ alias fin='find . -name "\!*" -print'
 #alias aj="ps aux | grep tniles | awk '{ print $11,$12,$13,$14,$15 }'"
 alias k9='kill -9 \!*'
 
+# locate and updatedb
+if [ $Cygwin -eq 1 ] ; then
+    alias updatedb="updatedb --prunepaths=\"/tmp /usr/tmp /var/tmp /afs /proc /cygdrive\""
+fi
+
 # damage control
 alias rm='rm -i'
 alias mv='mv -i'
@@ -243,16 +249,16 @@ if [ $Cygwin -eq 1 ] ; then
     sd ()
     {
         pushd "$*" > /dev/null
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
-    alias po='popd'
 else
     sd ()
     {
         pushd "$1" > /dev/null
         export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
-    alias po='popd && export PS1="[\#]\u@\h: `pwd | '"awk -F/ '{ print \$(NF-1)\"/\"\$(NF) }'"'` \$ "'
 fi
+alias po='popd && export PS1="[\#]\u@\h: `pwd | '"awk -F/ '{ print \$(NF-1)\"/\"\$(NF) }'"'` \$ "'
 
 alias cd='clear'
 unset -f cd ; unalias cd
