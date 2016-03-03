@@ -26,6 +26,18 @@ if [ `uname -o` == "Cygwin" ] ; then
     # start xwindow system if not yet running
     #startxwin -q &
     export DISPLAY=":0.0"
+    # start ssh-agent, e.g.  eval `ssh-agent -s`
+    SSHAGENT=/usr/bin/ssh-agent
+    SSHAGENTARGS="-s"
+    if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+        eval `$SSHAGENT $SSHAGENTARGS` > /dev/null
+        trap "kill $SSH_AGENT_PID" 0
+    fi
+    # Alternatively, start ssh with X (lives and dies with X):
+    # alias startxwin='ssh-agent startxwin'
+    # Or, instead of the above alias, add "eval $(ssh-agent)" to ~/.xinitrc
+    # Set prompt
+    export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]\w\[\e[0m\] \$ "
 else
     Cygwin=0
 fi
@@ -242,14 +254,16 @@ alias cp='cp -i'
 # secure deletion (not for journaled fs, see man page)
 alias shred='shred -u -v -n 3'  # -u/--remove may be best specified separately, as well as -f
 
-# directory control
+
+# directory control (cygwin case: add color back for the look and feel of cygwin)
+##### sd #####
 alias sd='clear'
 unset -f sd ; unalias sd
 if [ $Cygwin -eq 1 ] ; then
     sd ()
     {
         pushd "$*" > /dev/null
-        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
     }
 else
     sd ()
@@ -258,15 +272,38 @@ else
         export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
 fi
-alias po='popd && export PS1="[\#]\u@\h: `pwd | '"awk -F/ '{ print \$(NF-1)\"/\"\$(NF) }'"'` \$ "'
-
+##### po #####
+alias po='clear'
+unset -f po ; unalias po
+if [ $Cygwin -eq 1 ] ; then
+    po ()
+    {
+        popd
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
+    }
+else
+    po ()
+    {
+        popd
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+    }
+fi
+##### cd #####
 alias cd='clear'
 unset -f cd ; unalias cd
-cd ()
-{
-    command cd "$1"
-    export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
-}
+if [ $Cygwin -eq 1 ] ; then
+    cd ()
+    {
+        command cd "$1"
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
+    }
+else
+    cd ()
+    {
+        command cd "$1"
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+    }
+fi
 
 alias h='history'
 alias j='jobs'
@@ -275,6 +312,7 @@ alias dj='d ; j'
 alias cdh='cd ~'
 alias sdh='sd ~'
 alias sdhome='sd ~'
+# For cygwin, I just add symlinks in my ~ to the sea drive
 alias cddesk='cd ~/Desktop'
 alias sddesk='sd ~/Desktop'
 alias cddl='cd ~/Downloads'
@@ -357,8 +395,12 @@ alias shmcheck="ipcs -m /run/shm | command awk -F' ' '{ printf \"%d %d\n\", \$5,
 # OpenPGP Gnu Privacy Guard
 alias gpg='gpg2 --no-greeting'              # gpg2 for desktops, suppress copyright
 
+# pgrep, pkill
+alias pgrep='pgrep -l'          # output long form (id and name)
+#alias pkill='pkill -s'          # pkill -s pidNum
+
 # disk disk
-# pgrep -l 'dd$'            # get $PID of dd
+# pgrep 'dd$'            # get $PID of dd
 # sudo kill -USR1 $PID      # temporary kill (use -USR with caution), output shows progress
  
 # dmesg
