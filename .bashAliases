@@ -25,6 +25,7 @@ if [ `uname -o` == "Cygwin" ] ; then
     echo "Cygwin detected"
     # start xwindow system if not yet running
     #startxwin -q &
+    alias startxwin='startxwin > /dev/null 2>&1 &'
     export DISPLAY=":0.0"
     # start ssh-agent, e.g.  eval `ssh-agent -s`
     SSHAGENT=/usr/bin/ssh-agent
@@ -216,6 +217,12 @@ alias findl='find . -type l'
 alias findr='find . -type f'
 # find the latest files, recursively
 #alias findlt='find /path -printf '%T+ %p\n' | sort -r | head'
+#alias fin='find . -name "\!*" -print'
+# find -name "*.pl" -exec chmod a+rx {} \; -print
+# find -name "*srec" -exec mv {} \.\/ \; -print | tee temp.txt
+# find . -type f -exec ls -s {} \; | sort -n -r | head -5
+# find . -type f -exec ls -s {} \; | sort -n | head -5
+# find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
 alias top='/usr/bin/top d 1'
 # Use top to show threads of a particular process
 #alias topt='–H –p <app’s PID>'
@@ -232,12 +239,6 @@ alias lspkg="dpkg --get-selections | grep -v deinstall | sed 's/:/ /' | awk -F' 
 alias ut='uptime'
 alias atq='at -l;ls -AFl /var/spool/at;ls -AFl /var/spool/at/spool;/usr/bin/atq'
 #alias atq=at -l\;ls -l /usr/spool/cron/atjobs\; /bin/atq
-alias fin='find . -name "\!*" -print'
-# find -name "*.pl" -exec chmod a+rx {} \; -print
-# find -name "*srec" -exec mv {} \.\/ \; -print | tee temp.txt
-# find . -type f -exec ls -s {} \; | sort -n -r | head -5
-# find . -type f -exec ls -s {} \; | sort -n | head -5
-# find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
 #alias aj="ps aux | grep tniles | awk '{ print $11,$12,$13,$14,$15 }'"
 alias k9='kill -9 \!*'
 
