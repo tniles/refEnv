@@ -23,10 +23,9 @@ echo "Defining Linux aliases..."
 if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
-    # start xwindow system if not yet running
-    #startxwin -q &
-    alias startxwin='startxwin > /dev/null 2>&1 &'
-    export DISPLAY=":0.0"
+    # start xwindow system if not yet running (using a 'random' display number)
+    alias myx='startxwin -- :3132 > /dev/null 2>&1 &'
+    export DISPLAY=":3132.0"
     # start ssh-agent, e.g.  eval `ssh-agent -s`
     SSHAGENT=/usr/bin/ssh-agent
     SSHAGENTARGS="-s"
@@ -485,7 +484,9 @@ alias crd='curl --verbose --head --location'
 ###############################################################################
 # Networking
 
-alias ssh='ssh -Y'
+if [ $Cygwin -eq 0 ] ; then
+    alias ssh='ssh -Y'
+fi
 
 alias ping='ping -c 10'
 
