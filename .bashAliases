@@ -24,8 +24,9 @@ if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
     # start xwindow system if not yet running (using a 'random' display number)
-    alias myx='startxwin -- :3132 > /dev/null 2>&1 &'
-    export DISPLAY=":3132.0"
+    #alias myx='startxwin -- :3132 > /dev/null 2>&1 &'
+    alias myx='startxwin -- :31 &'
+    export DISPLAY=":31.0"
     # start ssh-agent, e.g.  eval `ssh-agent -s`
     SSHAGENT=/usr/bin/ssh-agent
     SSHAGENTARGS="-s"
@@ -33,6 +34,7 @@ if [ `uname -o` == "Cygwin" ] ; then
         eval `$SSHAGENT $SSHAGENTARGS` > /dev/null
         trap "kill $SSH_AGENT_PID" 0
     fi
+    export SVN_SSH="ssh -q"
     # Alternatively, start ssh with X (lives and dies with X):
     # alias startxwin='ssh-agent startxwin'
     # Or, instead of the above alias, add "eval $(ssh-agent)" to ~/.xinitrc
@@ -200,6 +202,16 @@ hg() {
     esac
 }
 
+# svn
+#
+# bash functions for advanced (multi-word) svn aliases
+unset -f svn
+svn() {
+    case $* in
+        diff* ) shift 1; command svn diff --diff-cmd kdiff3 "$@" ;;
+        * ) command svn "$@" ;;
+    esac
+}
 
 # Linux Utilities
 
