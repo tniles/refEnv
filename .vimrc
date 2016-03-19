@@ -40,7 +40,6 @@ if has("gui_running")
   " Maximize gvim window.
   " I found 94 columns to work best when pdf'ing txt files for printing.
   set lines=50 columns=94
-  set lines=55 columns=80 " TEMP
 else
   " This is console Vim.
   " Use running window (do nothing)
