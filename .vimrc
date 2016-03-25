@@ -10,8 +10,8 @@ syntax on
 
 " COLORS/SYNTAX (if using windows gvim, place colors/plugins in the windows dir)
 "set term=xterm
-colorscheme tango
-"colorscheme chocolateliquor
+" good with transparency in shells: tango/2, desert, freya, chocolateliquor
+colorscheme chocolateliquor
 if has("gui_running")
   colorscheme chocolateliquor
   "colorscheme desert   " other colors located in $VIMRUNTIME/colors
