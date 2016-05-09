@@ -23,6 +23,24 @@ echo "Defining Linux aliases..."
 if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
+    # start xwindow system if not yet running (using a 'random' display number)
+    alias myx='startxwin -- :31 > /dev/null 2>&1 &'
+    #alias myx='startxwin -- :31 &'
+    export DISPLAY=":31.0"
+    # start ssh-agent, e.g.  eval `ssh-agent -s`
+    SSHAGENT=/usr/bin/ssh-agent
+    SSHAGENTARGS="-s"
+    if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+        eval `$SSHAGENT $SSHAGENTARGS` > /dev/null
+        trap "kill $SSH_AGENT_PID" 0
+    fi
+    export SVN_SSH="ssh -q"
+    # Alternatively, start ssh with X (lives and dies with X):
+    # alias startxwin='ssh-agent startxwin'
+    # Or, instead of the above alias, add "eval $(ssh-agent)" to ~/.xinitrc
+    alias mode='mode.com'
+    # Set prompt
+    export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]\w\[\e[0m\] \$ "
 else
     Cygwin=0
 fi
@@ -40,13 +58,8 @@ fi
 # unset -f ls_func ; unalias ls_func
 
 unset -f gvim
-if [ $Cygwin -eq 1 ] ; then
-    gvim ()
-    {
-        ~/bin/gvim "$@" &
-    }
-else
-# This solves the "Ubuntu Menu Proxy: Timeout was reached" error with the unity desktop
+if [ $Cygwin -eq 0 ] ; then
+    # This solves the "Ubuntu Menu Proxy: Timeout was reached" error with the unity desktop
     #alias gvim='UBUNTU_MENUPROXY= gvim'
     gvim ()
     {
@@ -77,6 +90,9 @@ else
 fi
 
 # kdiff 3
+if [ $Cygwin -eq 1 ] ; then
+    alias kdiff3='kdiff3-qt'
+fi
 unset -f kd
 kd ()
 {
@@ -187,6 +203,19 @@ hg() {
     esac
 }
 
+# svn
+#
+# bash functions for advanced (multi-word) svn aliases
+unset -f svn
+svn() {
+    case $* in
+        status* ) shift 1; command svn status "$@" | command grep -v "^?" ;;
+        diff* ) shift 1; command svn diff --diff-cmd kdiff3 "$@" ;;
+        help* ) shift 1; command svn help "$@" | less ;;
+        log* ) shift 1; command svn log -v "$@" | less ;;
+        * ) command svn "$@" ;;
+    esac
+}
 
 # Linux Utilities
 
@@ -203,6 +232,12 @@ alias findl='find . -type l'
 alias findr='find . -type f'
 # find the latest files, recursively
 #alias findlt='find /path -printf '%T+ %p\n' | sort -r | head'
+#alias fin='find . -name "\!*" -print'
+# find -name "*.pl" -exec chmod a+rx {} \; -print
+# find -name "*srec" -exec mv {} \.\/ \; -print | tee temp.txt
+# find . -type f -exec ls -s {} \; | sort -n -r | head -5
+# find . -type f -exec ls -s {} \; | sort -n | head -5
+# find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
 alias top='/usr/bin/top d 1'
 # Use top to show threads of a particular process
 #alias topt='–H –p <app’s PID>'
@@ -219,14 +254,13 @@ alias lspkg="dpkg --get-selections | grep -v deinstall | sed 's/:/ /' | awk -F' 
 alias ut='uptime'
 alias atq='at -l;ls -AFl /var/spool/at;ls -AFl /var/spool/at/spool;/usr/bin/atq'
 #alias atq=at -l\;ls -l /usr/spool/cron/atjobs\; /bin/atq
-alias fin='find . -name "\!*" -print'
-# find -name "*.pl" -exec chmod a+rx {} \; -print
-# find -name "*srec" -exec mv {} \.\/ \; -print | tee temp.txt
-# find . -type f -exec ls -s {} \; | sort -n -r | head -5
-# find . -type f -exec ls -s {} \; | sort -n | head -5
-# find . -not -empty -type f -exec ls -s {} \; | sort -n | head -5
 #alias aj="ps aux | grep tniles | awk '{ print $11,$12,$13,$14,$15 }'"
 alias k9='kill -9 \!*'
+
+# locate and updatedb
+if [ $Cygwin -eq 1 ] ; then
+    alias updatedb="updatedb --prunepaths=\"/tmp /usr/tmp /var/tmp /afs /proc /cygdrive\""
+fi
 
 # damage control
 alias rm='rm -i'
@@ -236,31 +270,56 @@ alias cp='cp -i'
 # secure deletion (not for journaled fs, see man page)
 alias shred='shred -u -v -n 3'  # -u/--remove may be best specified separately, as well as -f
 
-# directory control
+
+# directory control (cygwin case: add color back for the look and feel of cygwin)
+##### sd #####
 alias sd='clear'
 unset -f sd ; unalias sd
 if [ $Cygwin -eq 1 ] ; then
     sd ()
     {
         pushd "$*" > /dev/null
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
     }
-    alias po='popd'
 else
     sd ()
     {
         pushd "$1" > /dev/null
         export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
-    alias po='popd && export PS1="[\#]\u@\h: `pwd | '"awk -F/ '{ print \$(NF-1)\"/\"\$(NF) }'"'` \$ "'
 fi
-
+##### po #####
+alias po='clear'
+unset -f po ; unalias po
+if [ $Cygwin -eq 1 ] ; then
+    po ()
+    {
+        popd
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
+    }
+else
+    po ()
+    {
+        popd
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+    }
+fi
+##### cd #####
 alias cd='clear'
 unset -f cd ; unalias cd
-cd ()
-{
-    command cd "$1"
-    export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
-}
+if [ $Cygwin -eq 1 ] ; then
+    cd ()
+    {
+        command cd "$1"
+        export PS1="\[\e]0;\w\a\]\n\[\e[32m\][\#]\u@\h: \[\e[33m\]`pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'`\[\e[0m\] \$ "
+    }
+else
+    cd ()
+    {
+        command cd "$1"
+        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+    }
+fi
 
 alias h='history'
 alias j='jobs'
@@ -269,6 +328,7 @@ alias dj='d ; j'
 alias cdh='cd ~'
 alias sdh='sd ~'
 alias sdhome='sd ~'
+# For cygwin, I just add symlinks in my ~ to the sea drive
 alias cddesk='cd ~/Desktop'
 alias sddesk='sd ~/Desktop'
 alias cddl='cd ~/Downloads'
@@ -351,12 +411,19 @@ alias shmcheck="ipcs -m /run/shm | command awk -F' ' '{ printf \"%d %d\n\", \$5,
 # OpenPGP Gnu Privacy Guard
 alias gpg='gpg2 --no-greeting'              # gpg2 for desktops, suppress copyright
 
+# pgrep, pkill
+alias pgrep='pgrep -l'          # output long form (id and name)
+#alias pkill='pkill -s'          # pkill -s pidNum
+
 # disk disk
-# pgrep -l 'dd$'            # get $PID of dd
+# pgrep 'dd$'            # get $PID of dd
 # sudo kill -USR1 $PID      # temporary kill (use -USR with caution), output shows progress
  
 # dmesg
 alias dmesg='dmesg | less'
+
+# heads or tails
+alias head='head -n 20'
 
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -436,7 +503,9 @@ alias crd='curl --verbose --head --location'
 ###############################################################################
 # Networking
 
-alias ssh='ssh -Y'
+if [ $Cygwin -eq 0 ] ; then
+    alias ssh='ssh -Y'
+fi
 
 alias ping='ping -c 10'
 
@@ -487,14 +556,14 @@ alias lprmall='lprm -P $PRINTER -'
 pdf ()
 {
     for doc in "$@"; do
-        enscript --pretty-print --color -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
+        enscript --pretty-print --color --font="Courier@9.5/11.5" -h -j -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
     done
 }
 
 pdfn ()
 {
     for doc in "$@"; do
-        enscript --pretty-print --color --line-numbers -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
+        enscript --pretty-print --color --font="Courier@9.5/11.5" --line-numbers -i 0 -h -j -q -p - "$doc" | ps2pdf - ./"${doc%.*}".pdf
     done
 }
 
