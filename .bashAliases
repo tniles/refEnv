@@ -212,6 +212,7 @@ svn() {
         status* ) shift 1; command svn status "$@" | command grep -v "^?" ;;
         diff* ) shift 1; command svn diff --diff-cmd kdiff3 "$@" ;;
         help* ) shift 1; command svn help "$@" | less ;;
+        loghead* ) shift 1; command svn log -v "$@" | head ;;
         log* ) shift 1; command svn log -v "$@" | less ;;
         * ) command svn "$@" ;;
     esac
