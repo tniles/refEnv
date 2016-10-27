@@ -141,7 +141,7 @@ countdown ()
 
 
 # git
-
+#
 alias gs='git status'
 alias gd='git diff'
 alias gdc='git diff --check'
@@ -186,8 +186,9 @@ git() {
 alias qgit='qgit &'
 alias gitk='gitk --all &'
 
-# hg (mercurial)
 
+# hg (mercurial)
+#
 alias hgs='hg sum'
 alias hga='hg add'
 alias hgc='hg commit'
@@ -202,6 +203,7 @@ hg() {
         * ) command hg "$@" ;;
     esac
 }
+
 
 # svn
 #
@@ -219,6 +221,62 @@ svn() {
         * ) command svn "$@" ;;
     esac
 }
+
+# clearcase source control
+#
+# NOTE: use 'cleartool' where you want tab auto-completion
+alias ct='cleartool'
+alias cthelp='ct help | less'
+alias catcs='ct catcs'                            # show config spec for current view
+alias cs='catcs'
+alias myviews='ct lsview | grep $USER'            # list my views (all)
+alias pwv='ct lsview -cview'                      # print working view (can't set a windows view)
+alias ci='cleartool checkin'                      # check-in with commit message 
+alias co='cleartool checkout -unr -nc'            # check-out unreserved
+alias unco='cleartool uncheckout -rm'             # un-check-out, don't keep a copy
+
+# list all checked-out files (on Windows, change to linux style path for Cygwin)
+alias lsco='ct lsco -avobs -me -cview -short | sed s^\\\\^/^g | sed s^.:^^'
+#alias lsco='ct lsco -avobs -me -cview -short | tr "\134" "/"'     
+
+alias lsprivall='ct lsprivate -short'             # list all private objects
+alias lsprivateall='lsprivall'
+alias lspriv='ct lsprivate -short .'              # list all private objects in current dir
+alias lsprivate='lspriv'
+alias ctblame='cleartool annotate'                # see changes in a file by line and author
+alias blame='ctblame'
+alias ctinfo='cleartool describe'                 # get detailed metadata on a scm object
+alias ctver='cleartool describe -short'           # get version info on a scm object
+alias ctversion='ctver'
+alias ctdiff='cleartool diff -graphical -pre'
+
+# launch the CC graphical version tree
+unset -f lsvtree
+lsvtree()
+{
+  for named in "$@"; do
+    ct lsvtree -graphical "$named" &
+  done
+}
+alias lsvt='lsvtree'
+
+# To implement git-feature-branching-like behavior in clearcase, you need your dev branch and
+# a stable "integrator" branch. The idea is to do your dev, check it in, then rename it to a
+# feature branch; after this, you recreate your original dev branch to resume as usual. Why
+# not start with a named feature branch? Because then you would have to alter your config
+# spec. This way, you never have to touch your cs. This keeps the development history around
+# but stashed away out on a feature branch.
+#     Example here:
+#       1) Switch to your dev branch
+#       2) Check out files, do math, Check in files (to dev branch)
+#       3) Use the merge manager to merge your dev branch back the way it came
+#       4) ct rename brtype:tniles_dev  some_cool_feature_I_just_did    # create feature branch
+#       5) ct mkbrtype tniles_dev                                       # recreate dev branch
+#     NOTE: it is best to not have other files co'd on your dev branch during this because
+#     CC can become 'sticky' and not show the version history correctly (at least,
+#     graphically) until you really kick it (e.g. unco and co again).
+alias mkbrtype='ct mkbrtype -nc'
+
 
 # Linux Utilities
 
@@ -244,7 +302,8 @@ alias findr='find . -type f'
 alias top='/usr/bin/top d 1'
 # Use top to show threads of a particular process
 #alias topt='–H –p <app’s PID>'
-alias sa='source ~/.bashAliases'
+#alias sa='source ~/.bashAliases'
+alias sa='source ~/.bashrc'
 #alias mandump='man \!* | col -b > $HOME/mantxt/\!*.man'
 alias hcl='cat /dev/null > ~/.bash_history && history -c'   # clear bash cli history
 alias hc='hcl'

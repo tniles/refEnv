@@ -34,6 +34,8 @@ set scrolloff=5     " num visible lines surrounding cursor
 "set wildmode=longest,list  " autocompletion display parms (:help wildmode for more options)
 "set nowrap         " no text wrap
 "set number         " display line numbers at left
+"
+set fileformats=unix,dos    " read unix/dos formats, assume unix for new buffers
 
 if has("gui_running")
   " GUI is running or is about to start.
