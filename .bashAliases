@@ -645,9 +645,10 @@ alias lprc='a2ps --line-numbers=1 \!*'
 # You cscope database is now created.
 # When you invoke cscope type:
 # cscope –d     // prevents database from being rebuilt when invoking cscope
+alias cscope='cscope -R'
 
 
-# From build directory, using relative path. See sop for details.
+# Klockwork tool: Use from build directory, using relative path.
 alias kw='kwcheck run \!*'
 
 

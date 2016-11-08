@@ -35,7 +35,7 @@ set scrolloff=5     " num visible lines surrounding cursor
 "set nowrap         " no text wrap
 "set number         " display line numbers at left
 "
-set fileformats=unix,dos    " read unix/dos formats, assume unix for new buffers
+"set fileformats=unix,dos    " read unix/dos formats, assume unix for new buffers
 
 if has("gui_running")
   " GUI is running or is about to start.
@@ -65,8 +65,6 @@ set smartindent     " dynamically adjust indent (great for brackets)
 "softtabstop=2      " soft tab option
 set tabstop=4       " hard tabstops at 4 (8 is default)
 set shiftwidth=4    " num spaces inserted for indentation
-set tabstop=2       " TEMP
-set shiftwidth=2    " TEMP
 set expandtab       " transform tabs to spaces
 " remap for tabs to move only 4 spaces
 ":inoremap <Tab> <Tab>XXXXX
