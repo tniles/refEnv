@@ -453,7 +453,7 @@ alias cal='cal -3'
 
 # memory usage
 alias df='df -hT'
-alias du='du -h'
+alias du='du -h --max-depth=1'
 alias free='free -m'
 
 # Special locations referenced often
