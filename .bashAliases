@@ -222,7 +222,7 @@ svn() {
     esac
 }
 
-# clearcase source control
+# clearcase (cc) source control
 #
 # NOTE: use 'cleartool' where you want tab auto-completion
 alias ct='cleartool'
@@ -231,11 +231,13 @@ alias catcs='ct catcs'                            # show config spec for current
 alias cs='catcs'
 alias myviews='ct lsview | grep $USER'            # list my views (all)
 alias pwv='ct lsview -cview'                      # print working view (can't set a windows view)
-alias ci='cleartool checkin'                      # check-in with commit message 
-alias co='cleartool checkout -unr -nc'            # check-out unreserved
+alias ctci='cleartool checkin'                    # check-in with commit message 
+alias ctco='cleartool checkout -unr -nc'          # check-out unreserved
 alias unco='cleartool uncheckout -rm'             # un-check-out, don't keep a copy
 
 # list all checked-out files (on Windows, change to linux style path for Cygwin)
+# NOTE: the substitution work here is necessary for Windows views so the output is useful for
+#       other ct commands (e.g. ctdiff).
 alias lsco='ct lsco -avobs -me -cview -short | sed s^\\\\^/^g | sed s^.:^^'
 #alias lsco='ct lsco -avobs -me -cview -short | tr "\134" "/"'     
 
@@ -248,7 +250,8 @@ alias blame='ctblame'
 alias ctinfo='cleartool describe'                 # get detailed metadata on a scm object
 alias ctver='cleartool describe -short'           # get version info on a scm object
 alias ctversion='ctver'
-alias ctdiff='cleartool diff -graphical -pre'
+#alias ctdiff='cleartool diff -graphical -pre'
+alias ctdiff='~/bin/ctDiffHelper.sh'
 
 # launch the CC graphical version tree
 unset -f lsvtree
@@ -270,8 +273,8 @@ alias lsvt='lsvtree'
 #       1) Switch to your dev branch
 #       2) Check out files, do math, Check in files (to dev branch)
 #       3) Use the merge manager to merge your dev branch back the way it came
-#       4) ct rename brtype:tniles_dev  some_cool_feature_I_just_did    # create feature branch
-#       5) ct mkbrtype tniles_dev                                       # recreate dev branch
+#       4) ct rename brtype:tniles_br   some_cool_feature_I_just_did    # create feature branch
+#       5) ct mkbrtype tniles_br                                        # recreate dev branch
 #     NOTE: it is best to not have other files co'd on your dev branch during this because
 #     CC can become 'sticky' and not show the version history correctly (at least,
 #     graphically) until you really kick it (e.g. unco and co again).
