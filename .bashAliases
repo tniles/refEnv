@@ -23,10 +23,13 @@ echo "Defining Linux aliases..."
 if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
-    # start xwindow system if not yet running (using a 'random' display number)
+    # set the git editor (important when using windows git)
+    #export GIT_EDITOR="C:\cygwin\bin\vim.exe"
+    export GIT_EDITOR="vim"
+    # cmds to start xwindow system if not yet running (using a 'random' display number)
+    export DISPLAY=":31.0"
     alias myx='startxwin -- :31 > /dev/null 2>&1 &'
     #alias myx='startxwin -- :31 &'
-    export DISPLAY=":31.0"
     # start ssh-agent, e.g.  eval `ssh-agent -s`
     SSHAGENT=/usr/bin/ssh-agent
     SSHAGENTARGS="-s"
@@ -171,6 +174,10 @@ alias grv='gr'
 alias gmrh='git rev-parse HEAD'     # git most recent hash
 alias grph='gmrh'
 alias gt='git tag -a'               # make a heavy (annotated) tag
+
+alias grl='git reflog show --date=relative' # git reflog
+#alias gsb='git show-branch'
+#alias gsbr='git show-branch --reflog'
 
 # bash functions for advanced (multi-word) git aliases
 unset -f git
@@ -521,7 +528,7 @@ alias octave='octave -q'
 
 # other
 alias gp='gnuplot \!*'
-#alias ?="echo `/usr/ucb/whoami` on `hostname`"
+alias ?="echo `/usr/bin/whoami`@`hostname`"
 #alias oo='$HOME/OpenOffice.org1.0.3/soffice&'	#open office .org
 #alias unres='nm -u \!* > unres.lst'				#might want to re-enable later
 #alias findLocked='rlog -L -h * | more'				#might want to re-enable later
@@ -664,17 +671,17 @@ alias kw='kwcheck run \!*'
 # can be changed from the shell without having to re-source this file.
 #
 # By <IP> by station:
-export ipBase=126.26.17
-export ip1=$ipBase.174
-export ip2=$ipBase.159
-export ip3=$ipBase.160
-alias ipBase='set ipBase = \!*'
-alias ip1='set ip1 = $ipBase.\!*'
-alias ip2='set ip2 = $ipBase.\!*'
-alias ip3='set ip3 = $ipBase.\!*'
-alias tn1='telnet $ip1 2032'        # command ip port
-alias tn2='telnet $ip2 2032'
-alias tn3='telnet $ip3 2032'
+#export ipBase=126.26.17
+#export ip1=$ipBase.174
+#export ip2=$ipBase.159
+#export ip3=$ipBase.160
+#alias ipBase='set ipBase = \!*'
+#alias ip1='set ip1 = $ipBase.\!*'
+#alias ip2='set ip2 = $ipBase.\!*'
+#alias ip3='set ip3 = $ipBase.\!*'
+#alias tn1='telnet $ip1 2032'        # command ip port
+#alias tn2='telnet $ip2 2032'
+#alias tn3='telnet $ip3 2032'
 
 
 ##############################################################################
