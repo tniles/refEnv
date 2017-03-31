@@ -23,13 +23,14 @@ echo "Defining Linux aliases..."
 if [ `uname -o` == "Cygwin" ] ; then
     Cygwin=1
     echo "Cygwin detected"
-    # set the git editor (important when using windows git)
-    #export GIT_EDITOR="C:\cygwin\bin\vim.exe"
-    export GIT_EDITOR="vim"
+    # set the git editor (more relevant when using windows git)
+    export GIT_EDITOR="C:/cygwin64/bin/vim.exe"
+    #export GIT_EDITOR="vim"
     # cmds to start xwindow system if not yet running (using a 'random' display number)
     export DISPLAY=":31.0"
-    alias myx='startxwin -- :31 > /dev/null 2>&1 &'
-    #alias myx='startxwin -- :31 &'
+    #alias myx='startxwin -- :31 > /dev/null 2>&1 &'
+    # trying to catch a repeat error
+    alias myx='startxwin -- :31 &'
     # start ssh-agent, e.g.  eval `ssh-agent -s`
     SSHAGENT=/usr/bin/ssh-agent
     SSHAGENTARGS="-s"
@@ -37,6 +38,10 @@ if [ `uname -o` == "Cygwin" ] ; then
         eval `$SSHAGENT $SSHAGENTARGS` > /dev/null
         trap "kill $SSH_AGENT_PID" 0
     fi
+    # When using Windows Git (I believe version>2.11) which comes bundled with its own
+    # OpenSsh, the following SSH_ASKPASS env var is required.
+    export SSH_ASKPASS="/mingw64/libexec/git-core/git-gui--askpass"
+    # Tell SVN to be quiet...
     export SVN_SSH="ssh -q"
     # Alternatively, start ssh with X (lives and dies with X):
     # alias startxwin='ssh-agent startxwin'
@@ -93,9 +98,10 @@ else
 fi
 
 # kdiff 3
-if [ $Cygwin -eq 1 ] ; then
-    alias kdiff3='kdiff3-qt'
-fi
+#if [ $Cygwin -eq 1 ] ; then
+#    alias kdiff3='kdiff3-qt'
+#    alias kdiff3='/cygdrive/c/Program\ Files/KDiff3/kdiff3.exe'
+#fi
 unset -f kd
 kd ()
 {
