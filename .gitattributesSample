@@ -1,0 +1,13 @@
+# normalize line endings
+# From the git documentation: "This ensures that all files that Git considers
+# to be text will have normalized (LF) line endings in the repository."
+# But files will have native line endings when checked out into the working directory.
+* text=auto
+ 
+# tell git which files should be normalized (i.e. which files are text)
+*.txt text
+*.cpp text
+*.c text
+*.h text
+*.hpp text
+
