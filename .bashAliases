@@ -151,8 +151,7 @@ countdown ()
 
 # git
 #
-#alias gs='git status'
-alias gs='git branch ; echo " " ; git status'
+alias gs='git status'
 alias gd='git diff'
 alias gdc='git diff --check'
 alias gdt='git difftool -y'
@@ -174,10 +173,8 @@ alias glg='git log --graph | less -R'       # R/r for colors, but R is better fo
 alias glgd='git log --graph --decorate=full | less -R'  # decorate to include tags&refs
 alias glga='glgd'
 alias gk='gitk --all &'
-alias gsubup='git submodule update --init --recursive'
-# it is safer to have init and recursive bc when a submodule is added these will catch it
+alias gsubup='git submodule update --init'
 alias gfe='git submodule foreach --recursive' # run a cmd in all subrepos recursively (e.g. 'git clean -ffxd')
-# Example Usage: gfe git checkout master
 alias gr='git remote -v'            # list remotes
 alias grv='gr'
 alias gmrh='git rev-parse HEAD'     # git most recent hash
@@ -189,10 +186,6 @@ alias grl='git reflog show --date=relative' # git reflog
 #alias gsbr='git show-branch --reflog'
 
 # bash functions for advanced (multi-word) git aliases
-# also for windows git where I saw issues with 'rebase -i' and 'gfe', e.g.
-#       Entering 'SrcDir/subRepo1'
-#       C:\Program Files\Git\mingw64/libexec/git-core\git-submodule: line 340: checkout: command not found
-#       Stopping at 'SrcDir/subRepo1'; script returned non-zero status.
 unset -f git
 git() {
     case $* in

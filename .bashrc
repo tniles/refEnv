@@ -11,7 +11,6 @@ HISTCONTROL=ignoreboth
 
 # set default perms to 644
 umask 022
-UMASK=022
 
 # append to the history file, don't overwrite it
 shopt -s histappend
