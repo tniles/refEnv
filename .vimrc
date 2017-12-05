@@ -3,7 +3,11 @@
 
 " NOTE: to reset options to default values, type
 " :set optionparm&
-" into Vim (the ampersand after the option name). 
+" into vim (the ampersand after the option name). 
+
+" NOTE: to query option values, type
+" :set guifont?
+" into vim (the question mark after the option name). 
 
 set nocompatible
 syntax on
@@ -24,6 +28,7 @@ if has("gui_running")
     "colorscheme elflord
     "colorscheme Darkslategray
   endif
+  set guifont=Monospace\ 9
 endif
 
 " ENVIRONMENT
@@ -68,7 +73,7 @@ set shiftwidth=4    " num spaces inserted for indentation
 set expandtab       " transform tabs to spaces
 " remap for tabs to move only 4 spaces
 ":inoremap <Tab> <Tab>XXXXX
-set formatoptions=vctqr " auto format options
+set formatoptions+=vctqrn " auto format options
 
 " FOLDS
 set foldmethod=marker
