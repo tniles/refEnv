@@ -371,7 +371,7 @@ else
     sd ()
     {
         pushd "$1" > /dev/null
-        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+        #export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
 fi
 ##### po #####
@@ -387,7 +387,7 @@ else
     po ()
     {
         popd
-        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+        #export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
 fi
 ##### cd #####
@@ -403,7 +403,7 @@ else
     cd ()
     {
         command cd "$1"
-        export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
+        #export PS1="[\#]\u@\h: `pwd | awk -F/ '{ print $(NF-1)"/"$(NF) }'` \$ "
     }
 fi
 
