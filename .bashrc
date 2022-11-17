@@ -146,9 +146,9 @@ EDITOR=vim; export EDITOR
 EDIT=vim; export EDIT
 
 # tbn: add to path
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
+#if [ -d "$HOME/bin" ] ; then
+    #PATH="$HOME/bin:$PATH"
+#fi
 if [ -d "$HOME/bin/binLin" ] ; then
     PATH="$HOME/bin/binLin:$PATH"
 fi

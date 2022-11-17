@@ -91,7 +91,9 @@ else
     go ()
     {
         for named in "$@"; do
-            gnome-open "$named" 2>/dev/null
+            xdg-open "$named" 2>/dev/null
+            # gnome-open was deprecated as of Ubuntu 18.04
+            #gnome-open "$named" 2>/dev/null
             #gnome-open "$named"
         done
     }
@@ -158,14 +160,14 @@ alias gdc='git diff --check'
 alias gdt='git difftool -y'
 alias ga='git add'
 alias gb='git branch'
-alias gba='git branch -a'
-alias gbd='git branch -d'
+alias gba='git branch -a'       # list all branches
+alias gbd='git branch -d'       # delete branch
 alias gbr='git branch -r'       # show remote branches
 alias gbv='git branch -vv'      # show tracked remote branch
 alias gc='git commit'
 alias gca='git commit -a'
 alias gco='git checkout'
-alias gcob='git checkout -b'
+alias gcob='git checkout -b'    # create branch and switch to it
 alias gfetch='git fetch'
 alias gpull='git pull'
 alias gpush='git push'
@@ -305,7 +307,8 @@ alias mkbrtype='ct mkbrtype -nc'
 # Linux Utilities
 
 alias su='su -m'
-alias grep='grep --color=auto -n --binary-files=without-match'
+alias grep='grep --color=auto --binary-files=without-match'
+alias grepn='grep --color=auto -n --binary-files=without-match'
 alias grepi='grep -i'
 alias grepr='grep -r'
 alias grepir='grep -ir'
@@ -442,6 +445,11 @@ alias sdckt='sd ~/ckt'
 alias cdbin='cd ~/bin'
 alias sdbin='sd ~/bin'
 
+alias sdard='sd ~/src/arduinoSketches'
+alias sdarduino='sd ~/src/arduinoSketches'
+alias sdmoto='sd ~/src/motorProto'
+alias sdmotor='sd ~/src/motorProto'
+
 alias ls='ls -C -F --color=auto'
 alias l='ls --group-directories-first'
 alias la='l -A'
@@ -461,7 +469,7 @@ alias llaz='l -AlZ'
 # ls directories
 alias dir='l -d */ | sed s^//^/\ ^g'
 alias lld='ll -d */ | sed s^//^/\ ^g'
-alias llhd='llh ; du -hs *'     # list size of files and directories in human-readable format
+alias llhd='llh ; du'     # list size of files and directories in human-readable format
 # ls inodes
 alias li='l -i'
 # Note the 2nd field of ls -l reveals the number of inodes
@@ -609,6 +617,14 @@ alias connInfo='nmcli dev list iface'       # ubuntu 12.04, must supply iface, e
 #alias connInfo='nmcli dev show'             # ubuntu 15+
 # 'nm-tool' by itself is probably a better solution, and 'cat /etc/resolv.conf' is more
 # traditional and may be more telling.
+
+# for finding a nas
+alias findNas='sudo nmap -sn 192.168.0.0/24'
+
+# needed a keepalive for my automounted buffalo NAS
+#alias nasKeepAlive='while true; do date; ls /run/user/1000/gvfs/smb-share:server=ls420d97e,share=tnilesdata; sleep 60; done'
+alias nasKeepAlive='while true; do date; ls /run/user/1000/gvfs/afp-volume:host=LS420D97E.local,user=tniles,volume=tnilesData; sleep 60; done'
+#alias nasKeepAlive='while true; do date; ls /run/user/1000/gvfs/afp-volume:host=LS420D97E.local,user=tniles,volume=familyPhotos; sleep 60; done'
 
 
 ###############################################################################

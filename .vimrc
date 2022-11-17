@@ -28,7 +28,7 @@ if has("gui_running")
     "colorscheme elflord
     "colorscheme Darkslategray
   endif
-  set guifont=Monospace\ 9
+  set guifont=Monospace\ 11
 endif
 
 " ENVIRONMENT
